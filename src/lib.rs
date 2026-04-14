@@ -41,36 +41,33 @@ fn adblock<'py>(py: Python<'py>, m: Bound<'py, PyModule>) -> PyResult<()> {
     m.add_class::<FilterSet>()?;
     m.add_class::<BlockerResult>()?;
     m.add_class::<UrlSpecificResources>()?;
-    m.add("AdblockException", py.get_type_bound::<AdblockException>())?;
-    m.add("BlockerException", py.get_type_bound::<BlockerException>())?;
-    m.add(
-        "SerializationError",
-        py.get_type_bound::<SerializationError>(),
-    )?;
+    m.add("AdblockException", py.get_type::<AdblockException>())?;
+    m.add("BlockerException", py.get_type::<BlockerException>())?;
+    m.add("SerializationError", py.get_type::<SerializationError>())?;
     m.add(
         "DeserializationError",
-        py.get_type_bound::<DeserializationError>(),
+        py.get_type::<DeserializationError>(),
     )?;
     m.add(
         "OptimizedFilterExistence",
-        py.get_type_bound::<OptimizedFilterExistence>(),
+        py.get_type::<OptimizedFilterExistence>(),
     )?;
     m.add(
         "BadFilterAddUnsupported",
-        py.get_type_bound::<BadFilterAddUnsupported>(),
+        py.get_type::<BadFilterAddUnsupported>(),
     )?;
-    m.add("FilterExists", py.get_type_bound::<FilterExists>())?;
+    m.add("FilterExists", py.get_type::<FilterExists>())?;
     m.add(
         "AddResourceException",
-        py.get_type_bound::<AddResourceException>(),
+        py.get_type::<AddResourceException>(),
     )?;
     m.add(
         "InvalidBase64ContentError",
-        py.get_type_bound::<InvalidBase64ContentError>(),
+        py.get_type::<InvalidBase64ContentError>(),
     )?;
     m.add(
         "InvalidUtf8ContentError",
-        py.get_type_bound::<InvalidUtf8ContentError>(),
+        py.get_type::<InvalidUtf8ContentError>(),
     )?;
     Ok(())
 }
@@ -583,7 +580,7 @@ impl Engine {
     /// using `deserialize()` to get the same engine again.
     pub fn serialize<'p>(&mut self, py: Python<'p>) -> PyResult<Bound<'p, PyBytes>> {
         let bytes = self.serialize_inner()?;
-        let py_bytes = PyBytes::new_bound(py, &bytes);
+        let py_bytes = PyBytes::new(py, &bytes);
         Ok(py_bytes)
     }
 
