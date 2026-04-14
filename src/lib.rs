@@ -35,39 +35,42 @@ use std::io::{Read, Write};
 
 /// Brave's adblocking library in Python!
 #[pymodule]
-fn adblock(py: Python<'_>, m: &PyModule) -> PyResult<()> {
+fn adblock<'py>(py: Python<'py>, m: Bound<'py, PyModule>) -> PyResult<()> {
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
     m.add_class::<Engine>()?;
     m.add_class::<FilterSet>()?;
     m.add_class::<BlockerResult>()?;
     m.add_class::<UrlSpecificResources>()?;
-    m.add("AdblockException", py.get_type::<AdblockException>())?;
-    m.add("BlockerException", py.get_type::<BlockerException>())?;
-    m.add("SerializationError", py.get_type::<SerializationError>())?;
+    m.add("AdblockException", py.get_type_bound::<AdblockException>())?;
+    m.add("BlockerException", py.get_type_bound::<BlockerException>())?;
+    m.add(
+        "SerializationError",
+        py.get_type_bound::<SerializationError>(),
+    )?;
     m.add(
         "DeserializationError",
-        py.get_type::<DeserializationError>(),
+        py.get_type_bound::<DeserializationError>(),
     )?;
     m.add(
         "OptimizedFilterExistence",
-        py.get_type::<OptimizedFilterExistence>(),
+        py.get_type_bound::<OptimizedFilterExistence>(),
     )?;
     m.add(
         "BadFilterAddUnsupported",
-        py.get_type::<BadFilterAddUnsupported>(),
+        py.get_type_bound::<BadFilterAddUnsupported>(),
     )?;
-    m.add("FilterExists", py.get_type::<FilterExists>())?;
+    m.add("FilterExists", py.get_type_bound::<FilterExists>())?;
     m.add(
         "AddResourceException",
-        py.get_type::<AddResourceException>(),
+        py.get_type_bound::<AddResourceException>(),
     )?;
     m.add(
         "InvalidBase64ContentError",
-        py.get_type::<InvalidBase64ContentError>(),
+        py.get_type_bound::<InvalidBase64ContentError>(),
     )?;
     m.add(
         "InvalidUtf8ContentError",
-        py.get_type::<InvalidUtf8ContentError>(),
+        py.get_type_bound::<InvalidUtf8ContentError>(),
     )?;
     Ok(())
 }
@@ -565,9 +568,9 @@ impl Engine {
 
     /// Serialize this blocking engine to bytes. They can then be deserialized
     /// using `deserialize()` to get the same engine again.
-    pub fn serialize<'p>(&mut self, py: Python<'p>) -> PyResult<&'p PyBytes> {
+    pub fn serialize<'p>(&mut self, py: Python<'p>) -> PyResult<Bound<'p, PyBytes>> {
         let bytes = self.serialize_inner()?;
-        let py_bytes = PyBytes::new(py, &bytes);
+        let py_bytes = PyBytes::new_bound(py, &bytes);
         Ok(py_bytes)
     }
 
@@ -626,7 +629,8 @@ impl Engine {
     ///
     /// Tags can be used to cheaply enable or disable network rules with a
     /// corresponding $tag option.
-    pub fn use_tags(&mut self, tags: Vec<&str>) {
+    pub fn use_tags(&mut self, tags: Vec<String>) {
+        let tags = tags.iter().map(String::as_str).collect::<Vec<_>>();
         self.engine.use_tags(&tags);
     }
 
@@ -635,7 +639,8 @@ impl Engine {
     ///
     /// Tags can be used to cheaply enable or disable network rules with a
     /// corresponding $tag option.
-    pub fn enable_tags(&mut self, tags: Vec<&str>) {
+    pub fn enable_tags(&mut self, tags: Vec<String>) {
+        let tags = tags.iter().map(String::as_str).collect::<Vec<_>>();
         self.engine.enable_tags(&tags);
     }
 
@@ -644,7 +649,8 @@ impl Engine {
     ///
     /// Tags can be used to cheaply enable or disable network rules with a
     /// corresponding $tag option.
-    pub fn disable_tags(&mut self, tags: Vec<&str>) {
+    pub fn disable_tags(&mut self, tags: Vec<String>) {
+        let tags = tags.iter().map(String::as_str).collect::<Vec<_>>();
         self.engine.disable_tags(&tags);
     }
 
