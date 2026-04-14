@@ -252,7 +252,6 @@ fn rule_types_from_string(rule_types: &str) -> PyResult<RuleTypes> {
 /// created. FilterSet allows assembling a compound list from multiple
 /// different sources before compiling the rules into an Engine.
 #[pyclass]
-#[pyo3(text_signature = "($self, debug)")]
 #[derive(Clone)]
 pub struct FilterSet {
     filter_set: RustFilterSet,
@@ -279,7 +278,6 @@ impl FilterSet {
     ///
     /// The format is a string containing either "standard" (ABP/uBO-style)
     /// or "hosts".
-    #[pyo3(text_signature = "($self, filter_list, format, include_redirect_urls, rule_types)")]
     #[args(
         filter_list,
         format = "\"standard\"",
@@ -311,7 +309,6 @@ impl FilterSet {
     ///
     /// The format is a string containing either "standard" (ABP/uBO-style)
     /// or "hosts".
-    #[pyo3(text_signature = "($self, filters, format, include_redirect_urls, rule_types)")]
     #[args(
         filters,
         format = "\"standard\"",
@@ -418,7 +415,6 @@ impl UrlSpecificResources {
 ///
 /// [1]: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/ResourceType
 #[pyclass]
-#[pyo3(text_signature = "($self, filter_set, optimize)")]
 pub struct Engine {
     engine: RustEngine,
     optimize: bool,
@@ -442,7 +438,6 @@ impl Engine {
     /// * `url` - The URL of the request to check
     /// * `source_url` - The URL from where the request is made
     /// * `request_type` - The resource type that the request points to
-    #[pyo3(text_signature = "($self, url, source_url, request_type)")]
     pub fn check_network_urls(
         &self,
         url: &str,
@@ -465,9 +460,6 @@ impl Engine {
     /// * `third_party_request` - Is the given request to a third-party? Here,
     ///   `None` can be given and the engine will figure it out based on the
     ///   `hostname` and `source_hostname`.
-    #[pyo3(
-        text_signature = "($self, url, hostname, source_hostname, requsest_type, third_party_request)"
-    )]
     pub fn check_network_urls_with_hostnames(
         &self,
         url: &str,
@@ -499,11 +491,16 @@ impl Engine {
     /// * `previously_matched_rule` - Return a match as long as there are no
     ///    exceptions
     /// * `force_check_exceptions` - Check exceptions even if no other rule matches
-    #[pyo3(
-        text_signature = "($self, url, hostname, source_hostname, request_type, \
-        third_party_request, previously_matched_rule, force_check_exceptions)"
-    )]
     #[allow(clippy::too_many_arguments)]
+    #[pyo3(signature = (
+        url,
+        hostname,
+        source_hostname,
+        request_type,
+        third_party_request,
+        previously_matched_rule,
+        force_check_exceptions
+    ))]
     pub fn check_network_urls_with_hostnames_subset(
         &self,
         url: &str,
@@ -534,7 +531,6 @@ impl Engine {
     ///   Use `"template"` if wanting to specify a template resource type.
     /// * `content`: The resource data, encoded using standard base64 configuration
     /// * `aliases`: List of aliases for the resource
-    #[pyo3(text_signature = "($self, name, content_type, content, aliases)")]
     pub fn add_resource(
         &mut self,
         name: &str,
@@ -569,7 +565,6 @@ impl Engine {
 
     /// Serialize this blocking engine to bytes. They can then be deserialized
     /// using `deserialize()` to get the same engine again.
-    #[pyo3(text_signature = "($self)")]
     pub fn serialize<'p>(&mut self, py: Python<'p>) -> PyResult<&'p PyBytes> {
         let bytes = self.serialize_inner()?;
         let py_bytes = PyBytes::new(py, &bytes);
@@ -590,7 +585,6 @@ impl Engine {
     /// Serialize this blocking engine to a file. The file can then be
     /// deserialized using `deserialize_from_file()` to get the same engine
     /// again.
-    #[pyo3(text_signature = "($self, file)")]
     pub fn serialize_to_file(&mut self, file: &str) -> PyResult<()> {
         let data = self.serialize_inner()?;
         let mut fd = fs::OpenOptions::new()
@@ -603,7 +597,6 @@ impl Engine {
     }
 
     /// Deserialize a blocking engine from bytes produced with `serialize()`.
-    #[pyo3(text_signature = "($self, serialized)")]
     pub fn deserialize(&mut self, serialized: &[u8]) -> PyResult<()> {
         let result = self.engine.deserialize(serialized);
         match result {
@@ -617,7 +610,6 @@ impl Engine {
 
     /// Deserialize a blocking engine from file produced with
     /// `serialize_to_file()`.
-    #[pyo3(text_signature = "($self, file)")]
     pub fn deserialize_from_file(&mut self, file: &str) -> PyResult<()> {
         let mut fd = fs::File::open(file)?;
         let mut data: Vec<u8> = Vec::new();
@@ -626,7 +618,6 @@ impl Engine {
     }
 
     /// Checks if the given filter exists in the blocking engine.
-    #[pyo3(text_signature = "($self, filter)")]
     pub fn filter_exists(&self, filter: &str) -> bool {
         self.engine.filter_exists(filter)
     }
@@ -635,7 +626,6 @@ impl Engine {
     ///
     /// Tags can be used to cheaply enable or disable network rules with a
     /// corresponding $tag option.
-    #[pyo3(text_signature = "($self, tags)")]
     pub fn use_tags(&mut self, tags: Vec<&str>) {
         self.engine.use_tags(&tags);
     }
@@ -645,7 +635,6 @@ impl Engine {
     ///
     /// Tags can be used to cheaply enable or disable network rules with a
     /// corresponding $tag option.
-    #[pyo3(text_signature = "($self, tags)")]
     pub fn enable_tags(&mut self, tags: Vec<&str>) {
         self.engine.enable_tags(&tags);
     }
@@ -655,7 +644,6 @@ impl Engine {
     ///
     /// Tags can be used to cheaply enable or disable network rules with a
     /// corresponding $tag option.
-    #[pyo3(text_signature = "($self, tags)")]
     pub fn disable_tags(&mut self, tags: Vec<&str>) {
         self.engine.disable_tags(&tags);
     }
@@ -664,7 +652,6 @@ impl Engine {
     ///
     /// Tags can be used to cheaply enable or disable network rules with a
     /// corresponding $tag option.
-    #[pyo3(text_signature = "($self, tag)")]
     pub fn tag_exists(&self, tag: &str) -> bool {
         self.engine.tag_exists(tag)
     }
@@ -673,7 +660,6 @@ impl Engine {
     /// url. Once this has been called, all CSS ids and classes on a
     /// page should be passed to hidden_class_id_selectors to obtain any
     /// stylesheets consisting of generic rules.
-    #[pyo3(text_signature = "($self, url)")]
     pub fn url_cosmetic_resources(&self, url: &str) -> UrlSpecificResources {
         self.engine.url_cosmetic_resources(url).into()
     }
@@ -685,7 +671,6 @@ impl Engine {
     /// are not excepted.
     ///
     /// Exceptions should be passed directly from UrlSpecificResources.
-    #[pyo3(text_signature = "($self, classes, ids, exceptions)")]
     pub fn hidden_class_id_selectors(
         &self,
         classes: Vec<String>,
