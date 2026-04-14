@@ -11,19 +11,19 @@
     deprecated
 )]
 
-use adblock::blocker::BlockerResult as RustBlockerResult;
-use adblock::blocker::{BlockerError as RustBlockerError, Redirection};
-use adblock::cosmetic_filter_cache::UrlSpecificResources as RustUrlSpecificResources;
-use adblock::engine::Engine as RustEngine;
-use adblock::lists::FilterSet as RustFilterSet;
-use adblock::lists::{FilterFormat, ParseOptions, RuleTypes};
+use ::adblock::blocker::BlockerResult as RustBlockerResult;
+use ::adblock::blocker::{BlockerError as RustBlockerError, Redirection};
+use ::adblock::cosmetic_filter_cache::UrlSpecificResources as RustUrlSpecificResources;
+use ::adblock::engine::Engine as RustEngine;
+use ::adblock::lists::FilterSet as RustFilterSet;
+use ::adblock::lists::{FilterFormat, ParseOptions, RuleTypes};
 use pyo3::create_exception;
 use pyo3::exceptions::PyException;
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
 use pyo3::PyErr;
 
-use adblock::resources::{
+use ::adblock::resources::{
     AddResourceError as RustAddResourceError, MimeType, Resource, ResourceType,
 };
 use std::collections::HashMap;
