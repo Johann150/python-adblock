@@ -251,7 +251,7 @@ fn rule_types_from_string(rule_types: &str) -> PyResult<RuleTypes> {
 /// allow optimizations, all rules must be available when the Engine is first
 /// created. FilterSet allows assembling a compound list from multiple
 /// different sources before compiling the rules into an Engine.
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone)]
 pub struct FilterSet {
     filter_set: RustFilterSet,
