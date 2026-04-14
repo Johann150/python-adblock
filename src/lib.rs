@@ -463,6 +463,13 @@ impl Engine {
     /// * `third_party_request` - Is the given request to a third-party? Here,
     ///   `None` can be given and the engine will figure it out based on the
     ///   `hostname` and `source_hostname`.
+    #[pyo3(signature = (
+        url,
+        hostname,
+        source_hostname,
+        request_type,
+        third_party_request,
+    ))]
     pub fn check_network_urls_with_hostnames(
         &self,
         url: &str,
@@ -534,6 +541,12 @@ impl Engine {
     ///   Use `"template"` if wanting to specify a template resource type.
     /// * `content`: The resource data, encoded using standard base64 configuration
     /// * `aliases`: List of aliases for the resource
+    #[pyo3(signature = (
+        name,
+        content_type,
+        content,
+        aliases=None,
+    ))]
     pub fn add_resource(
         &mut self,
         name: &str,
