@@ -265,7 +265,7 @@ impl FilterSet {
     /// the more compact internal representation. If enabled, this information
     /// will be passed to the corresponding Engine.
     #[new]
-    #[args(debug = false)]
+    #[pyo3(signature = (debug=false))]
     pub fn new(debug: bool) -> Self {
         Self {
             filter_set: RustFilterSet::new(debug),
@@ -278,12 +278,12 @@ impl FilterSet {
     ///
     /// The format is a string containing either "standard" (ABP/uBO-style)
     /// or "hosts".
-    #[args(
+    #[pyo3(signature = (
         filter_list,
-        format = "\"standard\"",
-        include_redirect_urls = "false",
-        rule_types = "\"all\""
-    )]
+        format = "standard",
+        include_redirect_urls = false,
+        rule_types = "all"
+    ))]
     pub fn add_filter_list(
         &mut self,
         filter_list: &str,
@@ -309,12 +309,12 @@ impl FilterSet {
     ///
     /// The format is a string containing either "standard" (ABP/uBO-style)
     /// or "hosts".
-    #[args(
+    #[pyo3(signature = (
         filters,
-        format = "\"standard\"",
-        include_redirect_urls = "false",
-        rule_types = "\"all\""
-    )]
+        format = "standard",
+        include_redirect_urls = false,
+        rule_types = "all"
+    ))]
     pub fn add_filters(
         &mut self,
         filters: Vec<String>,
@@ -424,7 +424,7 @@ pub struct Engine {
 impl Engine {
     /// Create a new adblocking engine
     #[new]
-    #[args(filter_set, optimize = true)]
+    #[pyo3(signature = (filter_set, optimize = true))]
     pub fn new(filter_set: FilterSet, optimize: bool) -> Self {
         let engine = RustEngine::from_filter_set(filter_set.filter_set, optimize);
         Self { engine, optimize }
