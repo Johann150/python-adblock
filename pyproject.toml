@@ -12,15 +12,13 @@ classifiers = [
 ]
 
 [tool.poetry]
+requires-poetry = ">=2.0"
 name = "adblock"
 version = "0.6.0"
 description = "Brave's adblocking in Python"
 authors = ["Árni Dagur <arni@dagur.eu>"]
 
-[tool.poetry.dependencies]
-python = "^3.6"
-
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 maturin = "*"
 pytest = "*"
 toml = "*"
